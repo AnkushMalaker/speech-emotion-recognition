@@ -1,9 +1,11 @@
+from logging import error
 import tensorflow as tf
 import librosa
 import os
 import numpy as np
+from SpeechModel import SpeechModel
 
-EMOTION_DICT = {
+EMOTION_DICT_EMODB = {
     "W": "anger",
     "L": "boredom",
     "E": "disgust",
@@ -13,10 +15,33 @@ EMOTION_DICT = {
     "N": "Neutral",
 }
 
+EMOTION_DICT_RAVDEES = {
+    "01": "neutral",
+    "02": "calm",
+    "03": "happy",
+    "04": "sad",
+    "05": "angry",
+    "06": "fearful",
+    "07": "disgust",
+    "08": "surprised",
+}
+
+
+def process_audio_clip(file_path, label):
+    file_path = file_path.numpy()
+    audio, sr = librosa.load(file_path)
+    mfcc = np.mean(librosa.feature.mfcc(audio, sr, n_mfcc=40).T, axis=0)
+    mel = np.mean(librosa.feature.melspectrogram(audio, sr).T, axis=0)
+    chromagram = np.mean(librosa.feature.chroma_stft(audio, sr).T, axis=0)
+    spectral = np.mean(librosa.feature.spectral_contrast(audio, sr).T, axis=0)
+    tonnetz = np.mean(librosa.feature.tonnetz(audio, sr).T, axis=0)
+    extracted_features = tf.concat([mfcc, mel, chromagram, spectral, tonnetz], axis=0)
+    return extracted_features, label
+
 
 def get_dataset(
     training_dir="./train_data",
-    label_dict=EMOTION_DICT,
+    label_dict=EMOTION_DICT_RAVDEES,
     validation_dir=None,
     val_split=0.2,
     batch_size=128,
@@ -31,20 +56,7 @@ def get_dataset(
     """
 
     def decompose_label(file_path: str):
-        return label_to_int[file_path[-6:-5]]
-
-    def process_audio_clip(file_path, label):
-        file_path = file_path.numpy()
-        audio, sr = librosa.load(file_path)
-        mfcc = np.mean(librosa.feature.mfcc(audio, sr, n_mfcc=40).T, axis=0)
-        mel = np.mean(librosa.feature.melspectrogram(audio, sr).T, axis=0)
-        chromagram = np.mean(librosa.feature.chroma_stft(audio, sr).T, axis=0)
-        spectral = np.mean(librosa.feature.spectral_contrast(audio, sr).T, axis=0)
-        tonnetz = np.mean(librosa.feature.tonnetz(audio, sr).T, axis=0)
-        extracted_features = tf.concat(
-            [mfcc, mel, chromagram, spectral, tonnetz], axis=0
-        )
-        return extracted_features, label
+        return label_to_int[file_path.split("-")[2]]
 
     def tf_wrapper_process_audio_clip(file_path, label):
         extracted_features, label = tf.py_function(
@@ -95,47 +107,16 @@ def get_dataset(
     return train_ds, val_ds
 
 
-def create_model(model_type="emoDB", num_output_classes=7):
-    from tensorflow.keras import Model
-    from tensorflow.keras import layers as L
-
+def create_model(num_output_classes, model_type="ravdees"):
+    speechModel = SpeechModel(num_output_classes)
     if model_type.lower() == "emodb":
-        input_layer = L.Input(shape=(193, 1))
-
-        cnn1 = L.Conv1D(256, (5))(input_layer)
-        batch_norm1 = L.BatchNormalization()(cnn1)
-        relu1 = L.ReLU()(batch_norm1)
-
-        cnn2 = L.Conv1D(128, (5))(relu1)
-        relu2 = L.ReLU()(cnn2)
-        dropout1 = L.Dropout(0.1)(relu2)
-        batch_norm2 = L.BatchNormalization()(dropout1)
-
-        max_pool1 = L.MaxPool1D(8)(batch_norm2)
-
-        conv3 = L.Conv1D(128, (5))(max_pool1)
-        relu3 = L.ReLU()(conv3)
-        conv4 = L.Conv1D(128, (5))(relu3)
-        relu4 = L.ReLU()(conv4)
-        conv5 = L.Conv1D(128, (5))(relu4)
-        batch_norm4 = L.BatchNormalization()(conv5)
-        relu5 = L.ReLU()(batch_norm4)
-        dropout2 = L.Dropout(0.2)(relu5)
-
-        conv6 = L.Conv1D(128, (5))(dropout2)
-        flatten = L.Flatten()(conv6)
-        dropout3 = L.Dropout(0.2)(flatten)
-
-        output_layer = L.Dense(num_output_classes)(dropout3)
-        batch_norm5 = L.BatchNormalization()(output_layer)
-        softmax = L.Softmax()(batch_norm5)
-        model = Model(inputs=[input_layer], outputs=[softmax])
-        optimizer = tf.keras.optimizers.RMSprop(1e-5)
-        loss = tf.keras.losses.SparseCategoricalCrossentropy()
-        model.compile(optimizer=optimizer, loss=loss)
-
+        model = speechModel.getEmoDB()
+    elif model_type.lower() == "ravdees":
+        model = speechModel.getRAVDEES()
+    elif model_type.lower() == "iemocap":
+        model = speechModel.getIEMOCAP()
     else:
         print("Model_type unknown. Please use one of \[emoDB, Ravdees, IEMOCAP\]")
-        return None
+        return error
 
     return model

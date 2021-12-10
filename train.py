@@ -10,6 +10,12 @@ import warnings
 # Specifying a smaller n_ftt doesn't seem to fix it.
 warnings.filterwarnings("ignore", category=UserWarning)
 
+# Defaults
+
+EPOCHS = None
+BATCH_SIZE = None
+model_type = None
+NUM_LABELS = None
 # Argument Parser
 
 help_message = "Check the documentation available at https://www.github.com/AnkushMalaker/speech-emotion-recognition for more info on usage."
@@ -47,8 +53,8 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--dataset",
-    help='Specifies the specific architecture to be used. Check README for more info. Defaults to "emoDB".',
+    "--model_type",
+    help='Specifies the specific architecture to be used. Check README for more info. Defaults to "Ravdees".',
 )
 
 # This logic has to be improved to adapt to other datasets mentioned in the paper.
@@ -97,6 +103,17 @@ if args.val_split:
 else:
     val_split = 0.2
 
+if args.model_type:
+    model_type = model_type
+else:
+    model_type = "ravdees"
+
+if args.num_labels:
+    NUM_LABELS = args.num_labels
+else:
+    NUM_LABELS = 8
+
+
 train_ds, val_ds = get_dataset(
     training_dir=train_dir,
     validation_dir=val_dir,
@@ -106,7 +123,7 @@ train_ds, val_ds = get_dataset(
     cache=CACHE,
 )
 
-model = create_model()
+model = create_model(NUM_LABELS, model_type)
 
 ESCallback = tf.keras.callbacks.EarlyStopping(
     patience=2, restore_best_weights=True, verbose=3
@@ -120,4 +137,4 @@ model.fit(
     epochs=EPOCHS,
 )
 
-model.save(f'saved_model/{EPOCHS}_trained_model')
+model.save(f"saved_model/{EPOCHS}_trained_model")
