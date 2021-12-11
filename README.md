@@ -37,6 +37,10 @@ This repository can be used in the following ways:
 
 *Note*: A trained model is available in the `test_model` directory. This model has been trained on the RAVDEES dataset obtained from (this link)[https://zenodo.org/record/1188976].
 
+## Testing the model
+You may test a model you trained yourself or a model trained on the RAVDEES dataset provided in this repo. Use `test.py` to test an audio sample with labels from the RAVDEES dataset.  
+(Make sure you are calling the `test.py` from the test_model directory, or specify the saved_model_path relative to the location you're calling it from. Use `test.py -h` to see all the options)  
+
 ## Environment Setup
 `Librosa` needs `sondfile` to work. Install it via:  
 `sudo apt-get install libsndfile1`  

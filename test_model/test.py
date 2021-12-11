@@ -4,7 +4,7 @@ import numpy as np
 import argparse
 
 help_message = "Use the -f argument to specify file to be tested. Currently tests only one file at a time."
-parser = argparse.ArgumentParser(help=help_message)
+parser = argparse.ArgumentParser(description=help_message)
 
 parser.add_argument("-f", "--filename", help="Mention filename. Example: -f happy.wav")
 parser.add_argument("-m", "--model_path", help="Mention directory of saved model. Example: -m saved_model/205_epochs_ravdees")
