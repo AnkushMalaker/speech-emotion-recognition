@@ -6,7 +6,7 @@ class SpeechModel:
     def __init__(self, num_output_classes) -> None:
         self.num_output_classes = num_output_classes
 
-    def getRAVDEES(self) -> Model:
+    def getRAVDESS(self) -> Model:
         """Returns a tensorflow model that is according to specifications of the baseline CNN model in the paper."""
         input_layer = L.Input(shape=(193, 1))
 
