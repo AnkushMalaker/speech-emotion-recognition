@@ -15,7 +15,7 @@ EMOTION_DICT_EMODB = {
     "N": "Neutral",
 }
 
-EMOTION_DICT_RAVDEES = {
+EMOTION_DICT_RAVDESS = {
     "01": "neutral",
     "02": "calm",
     "03": "happy",
@@ -41,7 +41,7 @@ def process_audio_clip(file_path, label):
 
 def get_dataset(
     training_dir="./train_data",
-    label_dict=EMOTION_DICT_RAVDEES,
+    label_dict=EMOTION_DICT_RAVDESS,
     validation_dir=None,
     val_split=0.2,
     batch_size=128,
@@ -107,16 +107,16 @@ def get_dataset(
     return train_ds, val_ds
 
 
-def create_model(num_output_classes, model_type="ravdees"):
+def create_model(num_output_classes, model_type="ravdess"):
     speechModel = SpeechModel(num_output_classes)
     if model_type.lower() == "emodb":
         model = speechModel.getEmoDB()
-    elif model_type.lower() == "ravdees":
-        model = speechModel.getRAVDEES()
+    elif model_type.lower() == "ravdess":
+        model = speechModel.getRAVDESS()
     elif model_type.lower() == "iemocap":
         model = speechModel.getIEMOCAP()
     else:
-        print("Model_type unknown. Please use one of \[emoDB, Ravdees, IEMOCAP\]")
+        print("Model_type unknown. Please use one of \[emoDB, Ravdess, IEMOCAP\]")
         return error
 
     return model
