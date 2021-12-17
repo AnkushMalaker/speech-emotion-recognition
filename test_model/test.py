@@ -7,7 +7,7 @@ help_message = "Use the -f argument to specify file to be tested. Currently test
 parser = argparse.ArgumentParser(description=help_message)
 
 parser.add_argument("-f", "--filename", help="Mention filename. Example: -f happy.wav")
-parser.add_argument("-m", "--model_path", help="Mention directory of saved model. Example: -m saved_model/205_epochs_ravdees")
+parser.add_argument("-m", "--model_path", help="Mention directory of saved model. Example: -m saved_model/205_epochs_ravdess")
 args = parser.parse_args()
 
 if args.filename:
@@ -18,7 +18,7 @@ else:
 if args.model_path:
     save_model_path = args.model_path
 else:
-    save_model_path = "saved_model/205_epochs_ravdees"
+    save_model_path = "saved_model/205_epochs_ravdess"
 
 def process_audio_clip(file_path):
     file_path = file_path
@@ -31,7 +31,7 @@ def process_audio_clip(file_path):
     extracted_features = tf.concat([mfcc, mel, chromagram, spectral, tonnetz], axis=0)
     return extracted_features
 
-EMOTION_DICT_RAVDEES = {
+EMOTION_DICT_RAVDESS = {
     "01": "neutral",
     "02": "calm",
     "03": "happy",
@@ -42,7 +42,7 @@ EMOTION_DICT_RAVDEES = {
     "08": "surprised",
 }
 
-label_dict = EMOTION_DICT_RAVDEES
+label_dict = EMOTION_DICT_RAVDESS
 
 label_to_int = dict({(key, i) for i, key in enumerate(label_dict.keys())})
 
