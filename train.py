@@ -54,7 +54,7 @@ parser.add_argument(
 
 parser.add_argument(
     "--model_type",
-    help='Specifies the specific architecture to be used. Check README for more info. Defaults to "Ravdees".',
+    help='Specifies the specific architecture to be used. Check README for more info. Defaults to "Ravdess".',
 )
 
 # This logic has to be improved to adapt to other datasets mentioned in the paper.
@@ -106,7 +106,7 @@ else:
 if args.model_type:
     model_type = model_type
 else:
-    model_type = "ravdees"
+    model_type = "ravdess"
 
 if args.num_labels:
     NUM_LABELS = args.num_labels

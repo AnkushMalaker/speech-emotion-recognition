@@ -35,10 +35,10 @@ This repository can be used in the following ways:
 - The model will be saved post training in the "saved_model" directory. 
 - Checkpoints feature pending
 
-*Note*: A trained model is available in the `test_model` directory. This model has been trained on the RAVDEES dataset obtained from (this link)[https://zenodo.org/record/1188976].
+*Note*: A trained model is available in the `test_model` directory. This model has been trained on the RAVDESS dataset obtained from (this link)[https://zenodo.org/record/1188976].
 
 ## Testing the model
-You may test a model you trained yourself or a model trained on the RAVDEES dataset provided in this repo. Use `test.py` to test an audio sample with labels from the RAVDEES dataset.  
+You may test a model you trained yourself or a model trained on the RAVDESS dataset provided in this repo. Use `test.py` to test an audio sample with labels from the RAVDESS dataset.  
 (Make sure you are calling the `test.py` from the test_model directory, or specify the saved_model_path relative to the location you're calling it from. Use `test.py -h` to see all the options)  
 
 ## Environment Setup
@@ -57,12 +57,12 @@ The baseline model uses a series of Convolution layers with Dropout and BatchNor
 There are serveral variations of the baseline model described in the paper. Ensemble models are not implemented in this repo.  
 
 Models available:  
-1. RAVDEES Model  
+1. RAVDESS Model  
 2. EMO-DB Model  
 3. IEMOCAP Model
 
 ## Limitations
-1. Currently this repo only supports dataset preparation for the RAVDEES model since different datasets describe their labels differently. You can still use this repo with other datasets by defining your own function to load the datasets and using the `process_audio_clip` function from `utils.py`.  
+1. Currently this repo only supports dataset preparation for the RAVDESS model since different datasets describe their labels differently. You can still use this repo with other datasets by defining your own function to load the datasets and using the `process_audio_clip` function from `utils.py`.  
 Then you may use `SpeechModel.py` to create a model based on specifications form the paper and train.  
 2. There are warning from librosa regarding minimum n_fft window being too large for certain samples. This has to be tuned on the basis of how big our files are. Currently its on the default size of `n_fft=1024` which may be too large for smaller samples.
 
